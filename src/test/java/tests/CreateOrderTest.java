@@ -9,6 +9,7 @@ import model.UserGenerator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
