@@ -9,6 +9,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.UUID;
+
 import static org.hamcrest.Matchers.is;
 
 public class UpdateUserTest {
@@ -26,24 +28,21 @@ public class UpdateUserTest {
         String requestBody = createUserJson(user);
         userApi.registerUser(requestBody);
 
-        // Авторизация пользователя и получение токена
-        ValidatableResponse authResponse = userApi.loginUser(user.getEmail(), user.getPassword());
-
-        // Печать токена для проверки
-        authToken = authResponse.extract().path("accessToken");
-        System.out.println("Полученный токен: " + authToken);
     }
 
     @Test
     @Step("Изменение имени пользователя с авторизацией")
     public void updateUserNameWithAuth() {
+        ValidatableResponse authResponse = userApi.loginUser(user.getEmail(), user.getPassword());// Авторизация пользователя и получение токена
+
+        authToken = authResponse.extract().path("accessToken");
+        System.out.println("Полученный токен: " + authToken);// Печать токена для проверки
+
         String updatedUserName = "NewName"; // новое имя пользователя
         String requestBody = String.format("{ \"name\": \"%s\" }", updatedUserName);
 
-        ValidatableResponse response = userApi.updateUser(requestBody, "Bearer " + authToken);
+        ValidatableResponse response = userApi.updateUser(requestBody, authToken);
 
-
-        // Проверка кода и тела ответа
         response.log().all()
                 .assertThat()
                 .statusCode(200)
@@ -57,7 +56,6 @@ public class UpdateUserTest {
         String requestBody = "{ \"name\": \"NewName\" }";
         ValidatableResponse response = userApi.updateUser(requestBody, null);
 
-        // Проверка кода и тела ответа
         response.log().all()
                 .assertThat()
                 .statusCode(401)
@@ -65,13 +63,21 @@ public class UpdateUserTest {
                 .body("message", is("You should be authorised"));
     }
 
+
     @Test
     @Step("Изменение email пользователя с авторизацией")
     public void updateUserEmailWithAuth() {
-        String requestBody = "{ \"email\": \"new_email@example.com\" }";
-        ValidatableResponse response = userApi.updateUser(requestBody, authToken); // используем authToken
 
-        // Проверка кода и тела ответа
+        ValidatableResponse authResponse = userApi.loginUser(user.getEmail(), user.getPassword());// Авторизация пользователя и получение токена
+
+        authToken = authResponse.extract().path("accessToken");
+        System.out.println("Полученный токен: " + authToken);
+
+        String uniqueEmail = "test-" + UUID.randomUUID() + "@yandex.ru";
+        String requestBody = "{ \"email\": \"" + uniqueEmail + "\", \"name\": \"NewName\" }";
+
+        ValidatableResponse response = userApi.updateUser(requestBody, authToken);
+
         response.log().all()
                 .assertThat()
                 .statusCode(200)
@@ -81,10 +87,9 @@ public class UpdateUserTest {
     @Test
     @Step("Попытка изменить email пользователя без авторизации")
     public void updateUserEmailWithoutAuth() {
-        String requestBody = "{ \"email\": \"new_email@example.com\" }";
+        String requestBody = "{ \"email\": \"test-new_email@yandex.ru\" }";
         ValidatableResponse response = userApi.updateUser(requestBody, null);
 
-        // Проверка кода и тела ответа
         response.log().all()
                 .assertThat()
                 .statusCode(401)

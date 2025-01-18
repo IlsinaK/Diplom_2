@@ -14,6 +14,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 
+
 public class GetOrdersTest {
 
     private OrderApi orderApi;
@@ -26,30 +27,45 @@ public class GetOrdersTest {
         userApi = new UserApi();
         orderApi = new OrderApi();
         user = UserGenerator.getRandomUser();
-
-        // Регистрация пользователя
-        String userJson = createUserJson(user);
-        userApi.registerUser(userJson);
-
-        // Авторизация и получение токена
-        authToken = userApi.loginUser(user.getEmail(), user.getPassword())
-                .extract()
-                .path("accessToken");
     }
 
     @Test
-    @Step("Получение заказов авторизованного пользователя")
-    public void getOrdersForAuthorizedUser() {
-        ValidatableResponse response = orderApi.getOrders(authToken); // Используем токен
+    @Step("Создание заказа и получение его для авторизованного пользователя")
+    public void createAndGetOrderForAuthorizedUser() {
+        String userJson = createUserJson(user);
+        userApi.registerUser(userJson);
 
-        response.log().all()
+        authToken = userApi.loginUser(user.getEmail(), user.getPassword())  // Авторизация и получение токена
+                .extract()
+                .path("accessToken");
+        List<String> ingredientIds = orderApi.getIngredientIds();   // Получаем список ID ингредиентов перед созданием заказа
+
+        if (ingredientIds.isEmpty()) {
+            throw new IllegalStateException("Ингредиенты не найдены");// Убедимся, что ID ингредиентов получены
+        }
+
+        String ingredientId = "\"" + ingredientIds.get(0) + "\""; //  Создаем заказ с первым ингредиентом
+        String orderRequest = "{ \"ingredients\": [" + ingredientId + "] }"; // Используем один ингредиент
+        System.out.println("Создаем заказ с ингредиентом: " + orderRequest);
+
+        ValidatableResponse createResponse = orderApi.createOrder(orderRequest, authToken); // Создаем заказ
+
+        createResponse.log().all()
                 .assertThat()
                 .statusCode(200)
+                .body("success", is(true)); // Ожидаем успех
+
+
+        ValidatableResponse getOrdersResponse = orderApi.getOrders(authToken); // Получаем заказы для авторизованного пользователя
+        getOrdersResponse.log().all();
+
+
+        getOrdersResponse.assertThat()
+                .statusCode(200)
                 .body("success", is(true))
-                .body("orders", is(List.of())) // Проверка на наличие заказов, ожидаем пустой список за нового пользователя
-                .body("total", is(0)) // Ожидаем общее количество 0
-                .body("totalToday", is(0)); // Ожидаем количество заказов за сегодня 0
+                .body("orders[0].ingredients", is(List.of(ingredientIds.get(0)))); // Проверяем, что ingredients заказа совпадает с ожидаемым
     }
+
 
     @Test
     @Step("Получение заказов неавторизованного пользователя")
@@ -63,12 +79,11 @@ public class GetOrdersTest {
                 .body("message", is("You should be authorised"));
     }
 
+
     @After
     public void tearDown() {
-        // Удаляем пользователя, если служба это поддерживает
         if (user != null) {
-            // Получаем токен после авторизации для удаления пользователя
-            String deleteToken = userApi.loginUser(user.getEmail(), user.getPassword())
+            String deleteToken = userApi.loginUser(user.getEmail(), user.getPassword())// Получаем токен после авторизации для удаления пользователя
                     .extract()
                     .path("accessToken");
 

@@ -14,7 +14,6 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 
-
 public class CreateOrderTest {
 
     private OrderApi orderApi;
@@ -23,24 +22,21 @@ public class CreateOrderTest {
     private UserDataLombok user;
     private String authToken;
     private String refreshToken;
+
     @Before
     public void setUp() {
         orderApi = new OrderApi();
         userApi = new UserApi();
         ingredientIds = orderApi.getIngredientIds();
 
-        // Генерация случайного пользователя
         user = UserGenerator.getRandomUser();
         String requestBody = String.format("{ \"email\": \"%s\", \"password\": \"%s\", \"name\": \"%s\" }",
                 user.getEmail(), user.getPassword(), user.getName());
 
-        // Регистрация пользователя
-        userApi.registerUser(requestBody);
+        userApi.registerUser(requestBody); // Регистрация пользователя
 
-        // Авторизация пользователя и получение токена
-        ValidatableResponse authResponse = userApi.loginUser(user.getEmail(), user.getPassword());
+        ValidatableResponse authResponse = userApi.loginUser(user.getEmail(), user.getPassword()); // Авторизация
         authToken = authResponse.extract().path("accessToken");
-        refreshToken = authResponse.extract().path("refreshToken"); // Получаем refreshToken
     }
 
     @Test
@@ -57,17 +53,15 @@ public class CreateOrderTest {
 
         response.log().all()
                 .assertThat()
-                .statusCode(200) // Ожидаемый статус 200
-                .body("success", is(true)); // Ожидаем успех
+                .statusCode(200)
+                .body("success", is(true));
     }
-
-
 
     @Test
     @Step("Создание заказа без ингредиентов")
     public void createOrderWithoutIngredients() {
         String orderRequest = "{ \"ingredients\": [] }";
-        ValidatableResponse response = orderApi.createOrder(orderRequest, authToken); // Используем токен
+        ValidatableResponse response = orderApi.createOrder(orderRequest, authToken);
 
         response.log().all()
                 .assertThat()
@@ -80,14 +74,12 @@ public class CreateOrderTest {
     @Step("Создание заказа с некорректным хешем ингредиентов")
     public void createOrderWithInvalidIngredientHash() {
         String orderRequest = "{ \"ingredients\": [\"61c0c5a71d1f82001bdaaa6l\"] }"; // Некорректный хэш
-        ValidatableResponse response = orderApi.createOrder(orderRequest, authToken); // Используем токен
+        ValidatableResponse response = orderApi.createOrder(orderRequest, authToken);
 
         response.log().all()
                 .assertThat()
                 .statusCode(500);
-             }
-
-
+    }
 
     @Test
     @Step("Создание заказа без авторизации")
@@ -99,22 +91,21 @@ public class CreateOrderTest {
         }
 
         String orderRequest = "{ \"ingredients\": [\"61c0c5a71d1f82001bdaaa6d\"] }";
-        // Создаем заказ без авторизации
-        ValidatableResponse response = orderApi.createOrder(orderRequest, authToken = null);
+        // Не передаем authToken
+        ValidatableResponse response = orderApi.createOrder(orderRequest, null);
 
         response.log().all()
                 .assertThat()
-                .statusCode(200);
+                .statusCode(200)
+                .body("success", is(true));
     }
 
 
     @After
     public void tearDown() {
-        String deleteToken = userApi.getToken(user.getEmail(), user.getPassword());
-        userApi.deleteUser(deleteToken, user.getPassword());
+        if (user != null) {
+            String deleteToken = userApi.getToken(user.getEmail(), user.getPassword());
+            userApi.deleteUser(deleteToken, user.getPassword());
+        }
     }
 }
-
-
-
-

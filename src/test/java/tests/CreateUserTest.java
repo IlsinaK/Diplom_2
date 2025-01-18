@@ -78,9 +78,10 @@ public class CreateUserTest {
 
     @After
     public void tearDown() {
-                String deleteToken = userApi.getToken(user.getEmail(), user.getPassword()); // Получите токен
+        String deleteToken = userApi.getToken(user.getEmail(), user.getPassword()); // Получите токен
         userApi.deleteUser(deleteToken, user.getPassword()); // Удаление пользователя после теста
     }
+
     private String createUserJson(UserDataLombok user) {
         return String.format("{ \"email\": \"%s\", \"password\": \"%s\", \"name\": \"%s\" }",
                 user.getEmail(), user.getPassword(), user.getName());
