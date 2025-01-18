@@ -13,14 +13,13 @@ public class UserApi extends RestApi {
                 .contentType("application/json")
                 .body(requestBody)
                 .when()
-                .post("https://stellarburgers.nomoreparties.site/api/auth/register")
+                .post(BASE_URL + "/auth/register")
                 .then();
     }
 
     public String getToken(String email, String password) {
         String requestBody = String.format("{ \"email\": \"%s\", \"password\": \"%s\" }", email, password);
         ValidatableResponse response = given()
-                .baseUri(BASE_URL)
                 .contentType("application/json")
                 .body(requestBody)
                 .when()
@@ -34,34 +33,26 @@ public class UserApi extends RestApi {
     public ValidatableResponse loginUser(String email, String password) {
         String requestBody = String.format("{ \"email\": \"%s\", \"password\": \"%s\" }", email, password);
         return given()
-                .baseUri(BASE_URL)
                 .contentType("application/json")
                 .body(requestBody)
                 .when()
-                .post( "/auth/login")
+                .post( BASE_URL + "/auth/login")
                 .then();
     }
 
-    public ValidatableResponse updateUser(String requestBody, String token) {
-        return given()
-                .baseUri(BASE_URL)
+    public ValidatableResponse updateUser(String requestBody, String authToken) {
+        var requestSpec = given()
                 .contentType("application/json")
-                .header("Authorization", "Bearer " + token)
-                .body(requestBody)
-                .when()
-                .patch("/auth/user") // Используйте относительный путь
-                .then();
-    }
+                .body(requestBody);
 
-    public void logoutUser(String refreshToken) {
-        String requestBody = String.format("{ \"token\": \"%s\" }", refreshToken);
-        ValidatableResponse response = given()
-                .contentType("application/json")
-                .body(requestBody)
+        if (authToken != null) { // Добавляем заголовок только если токен не null
+            requestSpec.header("Authorization", authToken);
+        }
+
+        return requestSpec
                 .when()
-                .post("https://stellarburgers.nomoreparties.site/api/auth/logout")
+                .patch(BASE_URL + "/auth/user")
                 .then();
-        response.assertThat().statusCode(200); // Проверяем, что выход успешен
     }
 
 

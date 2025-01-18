@@ -12,33 +12,42 @@ public class OrderApi extends RestApi {
     public List<String> getIngredientIds() {
         ValidatableResponse response = RestAssured.given()
                 .when()
-                .get("https://stellarburgers.nomoreparties.site/api/ingredients")
+                .get(BASE_URL + "/api/ingredients")
                 .then()
                 .statusCode(200);
 
-        // Получаем список ID ингредиентов из ответа
-        List<String> ingredientIds = response.extract().jsonPath().getList("data._id");
+        List<String> ingredientIds = response.extract().jsonPath().getList("data._id");  // Получаем список ID ингредиентов из ответа
 
         return ingredientIds;
     }
 
 
-    public ValidatableResponse createOrder(String orderRequest, String token) {
-        return RestAssured.given()
+    public ValidatableResponse createOrder(String orderRequest, String authToken) {
+        var request = RestAssured.given()
                 .contentType("application/json")
-                .body(orderRequest)
-                .when()
-                .post("https://stellarburgers.nomoreparties.site/api/orders")
+                .body(orderRequest);
+
+        // Добавляем заголовок только если токен не null
+        if (authToken != null) {
+            request.header("Authorization", authToken);
+        }
+
+        return request.when()
+                .post(BASE_URL + "/api/orders")
                 .then();
     }
 
-    public ValidatableResponse getOrders(String token) {
-        return given()
-                .baseUri(BASE_URL)
-                // Убираем токен из заголовка, если он не передан
-                .header("Authorization", token != null ? "Bearer " + token : "")
-                .when()
+
+    public ValidatableResponse getOrders(String authToken) {
+        var request = given().baseUri(BASE_URL);
+
+        if (authToken != null) {
+            request.header("Authorization", authToken);
+        }
+
+        return request.when()
                 .get("/orders")
                 .then();
     }
+
 }
