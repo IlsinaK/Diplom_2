@@ -1,5 +1,3 @@
-package tests;
-
 import api.OrderApi;
 import api.UserApi;
 import io.qameta.allure.Step;

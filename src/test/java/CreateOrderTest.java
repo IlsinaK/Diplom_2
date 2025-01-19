@@ -1,5 +1,3 @@
-package tests;
-
 import api.OrderApi;
 import api.UserApi;
 import io.qameta.allure.Step;
@@ -38,6 +36,7 @@ public class CreateOrderTest {
         ValidatableResponse authResponse = userApi.loginUser(user.getEmail(), user.getPassword()); // Авторизация
         authToken = authResponse.extract().path("accessToken");
     }
+
 
     @Test
     @Step("Создание заказа с авторизацией")

@@ -1,5 +1,3 @@
-package tests;
-
 import api.UserApi;
 import io.qameta.allure.Step;
 import io.restassured.response.ValidatableResponse;
