@@ -12,13 +12,23 @@ public class OrderApi extends RestApi {
     public List<String> getIngredientIds() {
         ValidatableResponse response = RestAssured.given()
                 .when()
-                .get(BASE_URL + "/api/ingredients")
-                .then()
-                .statusCode(200);
+                .get(BASE_URL + "/ingredients")
+                .then();
 
-        List<String> ingredientIds = response.extract().jsonPath().getList("data._id");  // Получаем список ID ингредиентов из ответа
 
-        return ingredientIds;
+        int statusCode = response.extract().statusCode();
+        System.out.println("Response status code: " + statusCode);
+
+
+        if (statusCode != 200) {
+
+            String errorResponse = response.extract().body().asString();
+            System.out.println("Error response body: " + errorResponse);
+            throw new RuntimeException("Ошибка API: " + statusCode + ". Ответ: " + errorResponse);
+        }
+
+
+        return response.extract().jsonPath().getList("data._id"); // Возвращаем ID ингредиентов
     }
 
 
@@ -33,7 +43,7 @@ public class OrderApi extends RestApi {
         }
 
         return request.when()
-                .post(BASE_URL + "/api/orders")
+                .post(BASE_URL + "/orders")
                 .then();
     }
 
