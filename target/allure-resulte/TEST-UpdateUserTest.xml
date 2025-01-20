@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="UpdateUserTest" time="4.477" tests="4" errors="0" skipped="0" failures="0">
+  <properties>
+    <property name="sun.desktop" value="windows"/>
+    <property name="awt.toolkit" value="sun.awt.windows.WToolkit"/>
+    <property name="java.specification.version" value="11"/>
+    <property name="sun.cpu.isalist" value="amd64"/>
+    <property name="sun.jnu.encoding" value="Cp1251"/>
+    <property name="java.class.path" value="C:\Diplom_praktikum\Diplom_2\target\test-classes;C:\Diplom_praktikum\Diplom_2\target\classes;C:\Users\Ильсина\.m2\repository\io\rest-assured\rest-assured\5.3.2\rest-assured-5.3.2.jar;C:\Users\Ильсина\.m2\repository\org\apache\groovy\groovy\4.0.11\groovy-4.0.11.jar;C:\Users\Ильсина\.m2\repository\org\apache\groovy\groovy-xml\4.0.11\groovy-xml-4.0.11.jar;C:\Users\Ильсина\.m2\repository\org\apache\httpcomponents\httpclient\4.5.13\httpclient-4.5.13.jar;C:\Users\Ильсина\.m2\repository\org\apache\httpcomponents\httpcore\4.4.13\httpcore-4.4.13.jar;C:\Users\Ильсина\.m2\repository\commons-logging\commons-logging\1.2\commons-logging-1.2.jar;C:\Users\Ильсина\.m2\repository\commons-codec\commons-codec\1.11\commons-codec-1.11.jar;C:\Users\Ильсина\.m2\repository\org\apache\httpcomponents\httpmime\4.5.13\httpmime-4.5.13.jar;C:\Users\Ильсина\.m2\repository\org\hamcrest\hamcrest\2.2\hamcrest-2.2.jar;C:\Users\Ильсина\.m2\repository\org\ccil\cowan\tagsoup\tagsoup\1.2.1\tagsoup-1.2.1.jar;C:\Users\Ильсина\.m2\repository\io\rest-assured\json-path\5.3.2\json-path-5.3.2.jar;C:\Users\Ильсина\.m2\repository\org\apache\groovy\groovy-json\4.0.11\groovy-json-4.0.11.jar;C:\Users\Ильсина\.m2\repository\io\rest-assured\rest-assured-common\5.3.2\rest-assured-common-5.3.2.jar;C:\Users\Ильсина\.m2\repository\io\rest-assured\xml-path\5.3.2\xml-path-5.3.2.jar;C:\Users\Ильсина\.m2\repository\org\apache\commons\commons-lang3\3.11\commons-lang3-3.11.jar;C:\Users\Ильсина\.m2\repository\junit\junit\4.13.2\junit-4.13.2.jar;C:\Users\Ильсина\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;C:\Users\Ильсина\.m2\repository\io\qameta\allure\allure-junit4\2.14.0\allure-junit4-2.14.0.jar;C:\Users\Ильсина\.m2\repository\io\qameta\allure\allure-java-commons\2.14.0\allure-java-commons-2.14.0.jar;C:\Users\Ильсина\.m2\repository\org\slf4j\slf4j-api\1.7.30\slf4j-api-1.7.30.jar;C:\Users\Ильсина\.m2\repository\io\qameta\allure\allure-model\2.14.0\allure-model-2.14.0.jar;C:\Users\Ильсина\.m2\repository\com\fasterxml\jackson\core\jackson-databind\2.12.3\jackson-databind-2.12.3.jar;C:\Users\Ильсина\.m2\repository\com\fasterxml\jackson\core\jackson-annotations\2.12.3\jackson-annotations-2.12.3.jar;C:\Users\Ильсина\.m2\repository\com\fasterxml\jackson\core\jackson-core\2.12.3\jackson-core-2.12.3.jar;C:\Users\Ильсина\.m2\repository\org\apache\tika\tika-core\1.26\tika-core-1.26.jar;C:\Users\Ильсина\.m2\repository\javax\xml\bind\jaxb-api\2.3.1\jaxb-api-2.3.1.jar;C:\Users\Ильсина\.m2\repository\javax\activation\javax.activation-api\1.2.0\javax.activation-api-1.2.0.jar;C:\Users\Ильсина\.m2\repository\javax\activation\activation\1.1.1\activation-1.1.1.jar;C:\Users\Ильсина\.m2\repository\org\jooq\joor-java-8\0.9.14\joor-java-8-0.9.14.jar;C:\Users\Ильсина\.m2\repository\io\qameta\allure\allure-rest-assured\2.14.0\allure-rest-assured-2.14.0.jar;C:\Users\Ильсина\.m2\repository\io\qameta\allure\allure-attachments\2.14.0\allure-attachments-2.14.0.jar;C:\Users\Ильсина\.m2\repository\org\freemarker\freemarker\2.3.31\freemarker-2.3.31.jar;C:\Users\Ильсина\.m2\repository\org\projectlombok\lombok\1.18.26\lombok-1.18.26.jar;"/>
+    <property name="java.vm.vendor" value="Amazon.com Inc."/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="user.variant" value=""/>
+    <property name="java.vendor.url" value="https://aws.amazon.com/corretto/"/>
+    <property name="user.timezone" value="Europe/Moscow"/>
+    <property name="java.vm.specification.version" value="11"/>
+    <property name="os.name" value="Windows 10"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="user.country" value="RU"/>
+    <property name="sun.boot.library.path" value="C:\Program Files\Amazon Corretto\jdk11.0.25_9\bin"/>
+    <property name="sun.java.command" value="C:\Users\4083~1\AppData\Local\Temp\surefire17734228318439937636\surefirebooter18200956408742256440.jar C:\Users\Ильсина\AppData\Local\Temp\surefire17734228318439937636 2025-01-19T12-55-41_880-jvmRun1 surefire12795900986681323421tmp surefire_07671911475673872549tmp"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="surefire.test.class.path" value="C:\Diplom_praktikum\Diplom_2\target\test-classes;C:\Diplom_praktikum\Diplom_2\target\classes;C:\Users\Ильсина\.m2\repository\io\rest-assured\rest-assured\5.3.2\rest-assured-5.3.2.jar;C:\Users\Ильсина\.m2\repository\org\apache\groovy\groovy\4.0.11\groovy-4.0.11.jar;C:\Users\Ильсина\.m2\repository\org\apache\groovy\groovy-xml\4.0.11\groovy-xml-4.0.11.jar;C:\Users\Ильсина\.m2\repository\org\apache\httpcomponents\httpclient\4.5.13\httpclient-4.5.13.jar;C:\Users\Ильсина\.m2\repository\org\apache\httpcomponents\httpcore\4.4.13\httpcore-4.4.13.jar;C:\Users\Ильсина\.m2\repository\commons-logging\commons-logging\1.2\commons-logging-1.2.jar;C:\Users\Ильсина\.m2\repository\commons-codec\commons-codec\1.11\commons-codec-1.11.jar;C:\Users\Ильсина\.m2\repository\org\apache\httpcomponents\httpmime\4.5.13\httpmime-4.5.13.jar;C:\Users\Ильсина\.m2\repository\org\hamcrest\hamcrest\2.2\hamcrest-2.2.jar;C:\Users\Ильсина\.m2\repository\org\ccil\cowan\tagsoup\tagsoup\1.2.1\tagsoup-1.2.1.jar;C:\Users\Ильсина\.m2\repository\io\rest-assured\json-path\5.3.2\json-path-5.3.2.jar;C:\Users\Ильсина\.m2\repository\org\apache\groovy\groovy-json\4.0.11\groovy-json-4.0.11.jar;C:\Users\Ильсина\.m2\repository\io\rest-assured\rest-assured-common\5.3.2\rest-assured-common-5.3.2.jar;C:\Users\Ильсина\.m2\repository\io\rest-assured\xml-path\5.3.2\xml-path-5.3.2.jar;C:\Users\Ильсина\.m2\repository\org\apache\commons\commons-lang3\3.11\commons-lang3-3.11.jar;C:\Users\Ильсина\.m2\repository\junit\junit\4.13.2\junit-4.13.2.jar;C:\Users\Ильсина\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;C:\Users\Ильсина\.m2\repository\io\qameta\allure\allure-junit4\2.14.0\allure-junit4-2.14.0.jar;C:\Users\Ильсина\.m2\repository\io\qameta\allure\allure-java-commons\2.14.0\allure-java-commons-2.14.0.jar;C:\Users\Ильсина\.m2\repository\org\slf4j\slf4j-api\1.7.30\slf4j-api-1.7.30.jar;C:\Users\Ильсина\.m2\repository\io\qameta\allure\allure-model\2.14.0\allure-model-2.14.0.jar;C:\Users\Ильсина\.m2\repository\com\fasterxml\jackson\core\jackson-databind\2.12.3\jackson-databind-2.12.3.jar;C:\Users\Ильсина\.m2\repository\com\fasterxml\jackson\core\jackson-annotations\2.12.3\jackson-annotations-2.12.3.jar;C:\Users\Ильсина\.m2\repository\com\fasterxml\jackson\core\jackson-core\2.12.3\jackson-core-2.12.3.jar;C:\Users\Ильсина\.m2\repository\org\apache\tika\tika-core\1.26\tika-core-1.26.jar;C:\Users\Ильсина\.m2\repository\javax\xml\bind\jaxb-api\2.3.1\jaxb-api-2.3.1.jar;C:\Users\Ильсина\.m2\repository\javax\activation\javax.activation-api\1.2.0\javax.activation-api-1.2.0.jar;C:\Users\Ильсина\.m2\repository\javax\activation\activation\1.1.1\activation-1.1.1.jar;C:\Users\Ильсина\.m2\repository\org\jooq\joor-java-8\0.9.14\joor-java-8-0.9.14.jar;C:\Users\Ильсина\.m2\repository\io\qameta\allure\allure-rest-assured\2.14.0\allure-rest-assured-2.14.0.jar;C:\Users\Ильсина\.m2\repository\io\qameta\allure\allure-attachments\2.14.0\allure-attachments-2.14.0.jar;C:\Users\Ильсина\.m2\repository\org\freemarker\freemarker\2.3.31\freemarker-2.3.31.jar;C:\Users\Ильсина\.m2\repository\org\projectlombok\lombok\1.18.26\lombok-1.18.26.jar;"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="C:\Users\Ильсина"/>
+    <property name="user.language" value="ru"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.version.date" value="2024-10-15"/>
+    <property name="java.home" value="C:\Program Files\Amazon Corretto\jdk11.0.25_9"/>
+    <property name="file.separator" value="\"/>
+    <property name="basedir" value="C:\Diplom_praktikum\Diplom_2"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.awt.graphicsenv" value="sun.awt.Win32GraphicsEnvironment"/>
+    <property name="surefire.real.class.path" value="C:\Users\4083~1\AppData\Local\Temp\surefire17734228318439937636\surefirebooter18200956408742256440.jar"/>
+    <property name="user.script" value=""/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="java.runtime.version" value="11.0.25+9-LTS"/>
+    <property name="user.name" value="Ильсина"/>
+    <property name="path.separator" value=";"/>
+    <property name="os.version" value="10.0"/>
+    <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
+    <property name="file.encoding" value="Cp1251"/>
+    <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
+    <property name="java.vendor.version" value="Corretto-11.0.25.9.1"/>
+    <property name="localRepository" value="C:\Users\Ильсина\.m2\repository"/>
+    <property name="java.vendor.url.bug" value="https://github.com/corretto/corretto-11/issues/"/>
+    <property name="java.io.tmpdir" value="C:\Users\4083~1\AppData\Local\Temp\"/>
+    <property name="java.version" value="11.0.25"/>
+    <property name="user.dir" value="C:\Diplom_praktikum\Diplom_2"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="java.awt.printerjob" value="sun.awt.windows.WPrinterJob"/>
+    <property name="sun.os.patch.level" value=""/>
+    <property name="java.library.path" value="C:\Program Files\Amazon Corretto\jdk11.0.25_9\bin;C:\Windows\Sun\Java\bin;C:\Windows\system32;C:\Windows;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\bin;C:\Users\Ильсина\bin;C:\Program Files\Amazon Corretto\jdk11.0.25_9\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\NVIDIA Corporation\NVIDIA app\NvDLISR;C:\Program Files\Git\cmd;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\bin;C:\Program Files\Docker\Docker\resources\bin;C:\Users\Ильсина\AppData\Local\Microsoft\WindowsApps;C:\Users\Ильсина\Desktop\практикум\allure-2.9.0\bin;C:\Users\Ильсина\Downloads\allure-commandline-2.9.0.zip\allure-2.9.0\bin;C:\Program Files\apache-maven-3.9.9\bin;C:\Program Files\Amazon Corretto\jdk11.0.25_9\bin;C:\Users\Ильсина\Desktop\практикум\allure-2.16.1\bin;."/>
+    <property name="java.vm.info" value="mixed mode"/>
+    <property name="java.vendor" value="Amazon.com Inc."/>
+    <property name="java.vm.version" value="11.0.25+9-LTS"/>
+    <property name="java.specification.maintenance.version" value="3"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="java.class.version" value="55.0"/>
+  </properties>
+  <testcase name="updateUserEmailWithoutAuth" classname="UpdateUserTest" time="0.959"/>
+  <testcase name="updateUserEmailWithAuth" classname="UpdateUserTest" time="1.235"/>
+  <testcase name="updateUserNameWithAuth" classname="UpdateUserTest" time="1.306"/>
+  <testcase name="updateUserNameWithoutAuth" classname="UpdateUserTest" time="0.976"/>
+</testsuite>
