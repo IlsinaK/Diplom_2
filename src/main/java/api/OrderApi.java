@@ -1,5 +1,6 @@
 package api;
 
+import io.qameta.allure.Step;
 import io.restassured.RestAssured;
 import io.restassured.response.ValidatableResponse;
 
@@ -9,6 +10,7 @@ import static io.restassured.RestAssured.given;
 
 public class OrderApi extends RestApi {
 
+    @Step ("Получение ID ингредиентов")
     public List<String> getIngredientIds() {
         ValidatableResponse response = RestAssured.given()
                 .when()
@@ -32,6 +34,7 @@ public class OrderApi extends RestApi {
     }
 
 
+    @Step("Создание заказа с запросом: {orderRequest}")
     public ValidatableResponse createOrder(String orderRequest, String authToken) {
         var request = RestAssured.given()
                 .contentType("application/json")
@@ -48,6 +51,7 @@ public class OrderApi extends RestApi {
     }
 
 
+    @Step("Получение заказов")
     public ValidatableResponse getOrders(String authToken) {
         var request = given().baseUri(BASE_URL);
 
