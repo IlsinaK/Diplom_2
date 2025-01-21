@@ -1,5 +1,6 @@
 import api.UserApi;
 import io.qameta.allure.Description;
+import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
 import model.UserDataLombok;
 import model.UserGenerator;
@@ -7,7 +8,7 @@ import model.UserLogin;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.DisplayName;
+
 
 
 import static org.hamcrest.Matchers.is;
