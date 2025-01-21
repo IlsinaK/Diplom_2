@@ -1,71 +1,66 @@
 package api;
 
-import io.qameta.allure.Step ;
+import io.qameta.allure.Step;
+import io.restassured.RestAssured;
 import io.restassured.response.ValidatableResponse;
 import model.UserDataLombok;
 import model.UserLogin;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+
 import static io.restassured.RestAssured.given;
 
 public class UserApi extends RestApi {
+
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @Step("Регистрация пользователя с данными: {requestBody}")
-    public ValidatableResponse registerUser(UserDataLombok userData) {
-        String requestBody;
 
-        try {
-            requestBody = objectMapper.writeValueAsString(userData);
-        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
-            throw new RuntimeException("Ошибка сериализации данных пользователя", e);
+        @Step("Регистрация пользователя")
+        public ValidatableResponse registerUser(UserDataLombok userData) {
+            String requestBody = serializeUserDataLombok(userData); // Сериализация объекта UserDataLombok
+
+            return RestAssured
+                    .given()
+                    .contentType("application/json")
+                    .body(requestBody)
+                    .when()
+                    .post(BASE_URL + "/auth/register")
+                    .then();
+
         }
+
+
+    @Step("Получение токена пользователя")
+    public String getToken(UserLogin userLogin) {
+        String requestBody = serializeUserLogin(userLogin); // Сериализация объекта
 
         return given()
                 .contentType("application/json")
                 .body(requestBody)
                 .when()
-                .post(BASE_URL + "/auth/register")
-                .then();
+                .post(BASE_URL + "/auth/login")
+                .then()
+                .extract()
+                .path("accessToken");
     }
 
-    @Step("Получение токена для пользователя с email: {email}")
-    public String getToken(String email, String password) {
-        UserLogin userLogin = new UserLogin(email, password);
-        String requestBody;
-        try {
-            requestBody = objectMapper.writeValueAsString(userLogin);
-        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
-            throw new RuntimeException("Ошибка сериализации данных пользователя", e);
-        }
-        ValidatableResponse response = given()
+    @Step("Авторизация пользователя")
+    public ValidatableResponse loginUser(UserLogin userLogin) {
+        String requestBody = serializeUserLogin(userLogin); // Сериализация объекта UserLogin
+
+        return given()
                 .contentType("application/json")
                 .body(requestBody)
                 .when()
                 .post(BASE_URL + "/auth/login")
                 .then();
-
-        return response.extract().path("accessToken");
-    }
-
-
-    @Step("Авторизация пользователя с email: {email}")
-    public ValidatableResponse loginUser(UserLogin userLogin) {
-        String requestBody;
-        try {
-            requestBody = objectMapper.writeValueAsString(userLogin);
-        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
-            throw new RuntimeException("Ошибка сериализации данных пользователя", e);
-        }
-        return given()
-                .contentType("application/json")
-                .body(requestBody)
-                .when()
-                .post( BASE_URL + "/auth/login")
-                .then();
     }
 
     @Step("Обновление данных пользователя")
-    public ValidatableResponse updateUser(String requestBody, String authToken) {
+    public ValidatableResponse updateUser(UserDataLombok userData, String authToken) {
+        String requestBody = serializeUserData(userData); // Сериализация объекта UserDataLombok
+
         var requestSpec = given()
                 .contentType("application/json")
                 .body(requestBody);
@@ -80,8 +75,6 @@ public class UserApi extends RestApi {
                 .then();
     }
 
-
-
     @Step("Удаление пользователя с токеном")
     public ValidatableResponse deleteUser(String token) {
         return given()
@@ -89,7 +82,35 @@ public class UserApi extends RestApi {
                 .delete(BASE_URL + "/auth/user")
                 .then();
     }
+
+    // Метод для сериализации объекта UserRegistration в JSON-строку
+    private String serializeUserDataLombok(UserDataLombok userDataLombok) {
+        try {
+            return objectMapper.writeValueAsString(userDataLombok);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Ошибка сериализации данных пользователя", e);
+        }
+    }
+
+    // Метод для сериализации объекта UserLogin в JSON-строку
+    private String serializeUserLogin(UserLogin userLogin) {
+        try {
+            return objectMapper.writeValueAsString(userLogin);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Ошибка сериализации данных пользователя", e);
+        }
+    }
+
+    // Метод для сериализации объекта UserDataLombok в JSON-строку
+    private String serializeUserData(UserDataLombok userData) {
+        try {
+            return objectMapper.writeValueAsString(userData);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Ошибка сериализации данных пользователя", e);
+        }
+    }
 }
+
 
 
 
