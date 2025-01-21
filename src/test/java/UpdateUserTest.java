@@ -1,11 +1,13 @@
 import api.UserApi;
-import io.qameta.allure.Step;
+import io.qameta.allure.Description;
 import io.restassured.response.ValidatableResponse;
 import model.UserDataLombok;
 import model.UserGenerator;
+import model.UserLogin;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
 
 import java.util.UUID;
 
@@ -23,15 +25,15 @@ public class UpdateUserTest {
         user = UserGenerator.getRandomUser();
 
         // Регистрация пользователя с уникальными данными
-        String requestBody = createUserJson(user);
-        userApi.registerUser(requestBody);
+        userApi.registerUser(user);
 
     }
 
     @Test
-    @Step("Изменение имени пользователя с авторизацией")
+    @DisplayName("Обновление имени пользователя с авторизацией")
+    @Description("Этот тест проверяет обновление имени пользователя для авторизованного пользователя.")
     public void updateUserNameWithAuth() {
-        ValidatableResponse authResponse = userApi.loginUser(user.getEmail(), user.getPassword());// Авторизация пользователя и получение токена
+        ValidatableResponse authResponse = userApi.loginUser(new UserLogin(user.getEmail(), user.getPassword()));// Авторизация пользователя и получение токена
 
         authToken = authResponse.extract().path("accessToken");
         System.out.println("Полученный токен: " + authToken);// Печать токена для проверки
@@ -49,7 +51,8 @@ public class UpdateUserTest {
     }
 
     @Test
-    @Step("Попытка изменить имя пользователя без авторизации")
+    @DisplayName("Обновление имени пользователя без авторизации")
+    @Description("Этот тест проверяет попытку обновления имени пользователя без авторизации.")
     public void updateUserNameWithoutAuth() {
         String requestBody = "{ \"name\": \"NewName\" }";
         ValidatableResponse response = userApi.updateUser(requestBody, null);
@@ -63,10 +66,11 @@ public class UpdateUserTest {
 
 
     @Test
-    @Step("Изменение email пользователя с авторизацией")
+    @DisplayName("Обновление email пользователя с авторизацией")
+    @Description("Этот тест проверяет обновление email пользователя для авторизованного пользователя.")
     public void updateUserEmailWithAuth() {
 
-        ValidatableResponse authResponse = userApi.loginUser(user.getEmail(), user.getPassword());// Авторизация пользователя и получение токена
+        ValidatableResponse authResponse = userApi.loginUser(new UserLogin(user.getEmail(), user.getPassword()));// Авторизация пользователя и получение токена
 
         authToken = authResponse.extract().path("accessToken");
         System.out.println("Полученный токен: " + authToken);
@@ -83,7 +87,8 @@ public class UpdateUserTest {
     }
 
     @Test
-    @Step("Попытка изменить email пользователя без авторизации")
+    @DisplayName("Обновление email пользователя без авторизации")
+    @Description("Этот тест проверяет попытку обновления email пользователя без авторизации.")
     public void updateUserEmailWithoutAuth() {
         String requestBody = "{ \"email\": \"test-new_email@yandex.ru\" }";
         ValidatableResponse response = userApi.updateUser(requestBody, null);
@@ -99,11 +104,6 @@ public class UpdateUserTest {
     public void tearDown() {
 
         String deleteToken = userApi.getToken(user.getEmail(), user.getPassword());
-        userApi.deleteUser(deleteToken, user.getPassword());
-    }
-
-    private String createUserJson(UserDataLombok user) {
-        return String.format("{ \"email\": \"%s\", \"password\": \"%s\", \"name\": \"%s\" }",
-                user.getEmail(), user.getPassword(), user.getName());
+        userApi.deleteUser(deleteToken);
     }
 }

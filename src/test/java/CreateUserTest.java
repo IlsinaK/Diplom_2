@@ -1,5 +1,6 @@
 import api.UserApi;
-import io.qameta.allure.Step;
+import io.qameta.allure.Description;
+import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
 import model.UserDataLombok;
 import model.UserGenerator;
@@ -21,10 +22,10 @@ public class CreateUserTest {
     }
 
     @Test
-    @Step("Создание уникального пользователя")
+    @DisplayName("Создание уникального пользователя")
+    @Description("Тест проверяет возможность регистрации нового пользователя с уникальными данными.")
     public void createUniqueUser() {
-        String requestBody = createUserJson(user);
-        ValidatableResponse response = userApi.registerUser(requestBody);
+        ValidatableResponse response = userApi.registerUser(user);
 
         response.log().all()
                 .assertThat()
@@ -32,15 +33,15 @@ public class CreateUserTest {
                 .body("success", is(true));
     }
 
+    @DisplayName("Создание существующего пользователя")
+    @Description("Тест проверяет попытку регистрации пользователя с уже существующими данными.")
     @Test
-    @Step("Создание пользователя, который уже существует")
     public void createExistingUser() {
-        String requestBody = createUserJson(user);
-        ValidatableResponse firstResponse = userApi.registerUser(requestBody);
+        ValidatableResponse firstResponse = userApi.registerUser(user);
         firstResponse.assertThat().statusCode(200); // Проверка успешного создания пользователя
 
         // Повторная регистрация
-        ValidatableResponse response = userApi.registerUser(requestBody);
+        ValidatableResponse response = userApi.registerUser(user);
         response.log().all()
                 .assertThat()
                 .statusCode(403)
@@ -48,11 +49,12 @@ public class CreateUserTest {
                 .body("message", is("User already exists"));
     }
 
+    @DisplayName("Создание пользователя без email")
+    @Description("Тест проверяет попытку регистрации пользователя без указания email.")
     @Test
-    @Step("Создание пользователя без электронной почты")
     public void createUserWithoutEmail() {
-        String requestBody = "{ \"password\": \"password\", \"name\": \"Username\" }";
-        ValidatableResponse response = userApi.registerUser(requestBody);
+        UserDataLombok newUser = new UserDataLombok("", "password", "Username");
+        ValidatableResponse response = userApi.registerUser(newUser);
 
         response.log().all()
                 .assertThat()
@@ -62,26 +64,35 @@ public class CreateUserTest {
     }
 
     @Test
-    @Step("Создание пользователя без пароля")
+    @DisplayName("Создание пользователя без пароля")
+    @Description("Тест проверяет попытку регистрации пользователя без указания пароля.")
     public void createUserWithoutPassword() {
-        String requestBody = String.format("{ \"email\": \"%s\", \"name\": \"%s\" }", user.getEmail(), user.getName());
-        ValidatableResponse response = userApi.registerUser(requestBody);
+        UserDataLombok newUser = new UserDataLombok(user.getEmail(), "", user.getName());
+        ValidatableResponse response = userApi.registerUser(newUser);
 
         response.log().all()
                 .assertThat()
                 .statusCode(403)
                 .body("success", is(false))
                 .body("message", is("Email, password and name are required fields"));
+    }
+    @Test
+    @DisplayName("Создание пользователя без имени")
+    @Description("Тест проверяет попытку регистрации пользователя без указания имени.")
+    public void createUserWithoutName() {
+        UserDataLombok newUser = new UserDataLombok(user.getEmail(), user.getPassword(), "");// Имя отсутствует
+        ValidatableResponse response = userApi.registerUser(newUser);
+
+        response.log().all()
+                .assertThat()
+                .statusCode(403)
+                .body("success", is(false))
+                .body("message", is("Email, password and name are required fields")); // Ожидаем сообщение об ошибке
     }
 
     @After
     public void tearDown() {
         String deleteToken = userApi.getToken(user.getEmail(), user.getPassword()); // Получите токен
-        userApi.deleteUser(deleteToken, user.getPassword()); // Удаление пользователя после теста
-    }
-
-    private String createUserJson(UserDataLombok user) {
-        return String.format("{ \"email\": \"%s\", \"password\": \"%s\", \"name\": \"%s\" }",
-                user.getEmail(), user.getPassword(), user.getName());
+        userApi.deleteUser(deleteToken); // Удаление пользователя после теста
     }
 }

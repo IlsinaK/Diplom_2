@@ -1,13 +1,18 @@
 import api.OrderApi;
 import api.UserApi;
-import io.qameta.allure.Step;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.qameta.allure.Description;
+import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
+import model.OrderRequest;
 import model.UserDataLombok;
 import model.UserGenerator;
+import model.UserLogin;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
@@ -19,31 +24,38 @@ public class GetOrdersTest {
     private UserApi userApi;
     private UserDataLombok user;
     private String authToken;
+    private ObjectMapper objectMapper;
 
     @Before
     public void setUp() {
         userApi = new UserApi();
         orderApi = new OrderApi();
         user = UserGenerator.getRandomUser();
+        objectMapper = new ObjectMapper();
     }
 
     @Test
-    @Step("Создание заказа и получение его для авторизованного пользователя")
+    @DisplayName("Создание и получение заказа для авторизованного пользователя")
+    @Description("Этот тест проверяет создание заказа для авторизованного пользователя и получение списка заказов.")
     public void createAndGetOrderForAuthorizedUser() {
-        String userJson = createUserJson(user);
-        userApi.registerUser(userJson);
+        userApi.registerUser(user);
 
-        authToken = userApi.loginUser(user.getEmail(), user.getPassword())  // Авторизация и получение токена
+        authToken = userApi.loginUser(new UserLogin(user.getEmail(), user.getPassword()))  // Авторизация и получение токена
                 .extract()
                 .path("accessToken");
+
         List<String> ingredientIds = orderApi.getIngredientIds();   // Получаем список ID ингредиентов перед созданием заказа
 
         if (ingredientIds.isEmpty()) {
             throw new IllegalStateException("Ингредиенты не найдены");// Убедимся, что ID ингредиентов получены
         }
 
-        String ingredientId = "\"" + ingredientIds.get(0) + "\""; //  Создаем заказ с первым ингредиентом
-        String orderRequest = "{ \"ingredients\": [" + ingredientId + "] }"; // Используем один ингредиент
+        String orderRequest;
+        try {
+            orderRequest = objectMapper.writeValueAsString(new OrderRequest(Collections.singletonList(ingredientIds.get(0))));
+        } catch (Exception e) {
+            throw new RuntimeException("Ошибка при сериализации объекта заказа", e);
+        }
         System.out.println("Создаем заказ с ингредиентом: " + orderRequest);
 
         ValidatableResponse createResponse = orderApi.createOrder(orderRequest, authToken); // Создаем заказ
@@ -66,7 +78,8 @@ public class GetOrdersTest {
 
 
     @Test
-    @Step("Получение заказов неавторизованного пользователя")
+    @DisplayName("Получение заказов неавторизованного пользователя")
+    @Description("Этот тест проверяет, что неавторизованный пользователь не может получить заказы и получает соответствующее сообщение об ошибке.")
     public void getOrdersForUnauthorizedUser() {
         ValidatableResponse response = orderApi.getOrders(null);
 
@@ -81,16 +94,8 @@ public class GetOrdersTest {
     @After
     public void tearDown() {
         if (user != null) {
-            String deleteToken = userApi.loginUser(user.getEmail(), user.getPassword())// Получаем токен после авторизации для удаления пользователя
-                    .extract()
-                    .path("accessToken");
-
-            userApi.deleteUser(deleteToken, user.getPassword());
+            String deleteToken = userApi.getToken(user.getEmail(), user.getPassword()); // Получаем токен после авторизации для удаления пользователя
+            userApi.deleteUser(deleteToken);
         }
-    }
-
-    private String createUserJson(UserDataLombok user) {
-        return String.format("{ \"email\": \"%s\", \"password\": \"%s\", \"name\": \"%s\" }",
-                user.getEmail(), user.getPassword(), user.getName());
     }
 }

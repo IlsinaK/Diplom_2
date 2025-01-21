@@ -1,11 +1,14 @@
 import api.UserApi;
-import io.qameta.allure.Step;
+import io.qameta.allure.Description;
 import io.restassured.response.ValidatableResponse;
 import model.UserDataLombok;
 import model.UserGenerator;
+import model.UserLogin;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
+
 
 import static org.hamcrest.Matchers.is;
 
@@ -18,13 +21,14 @@ public class LoginUserTest {
     public void setUp() {
         userApi = new UserApi();
         user = UserGenerator.getRandomUser();
-        userApi.registerUser(createUserJson(user));
+        userApi.registerUser(user);
     }
 
     @Test
-    @Step("Логин под существующим пользователем")
+    @DisplayName("Логин существующего пользователя")
+    @Description("Этот тест проверяет успешный логин для уже зарегистрированного пользователя.")
     public void loginExistingUser() {
-        ValidatableResponse response = userApi.loginUser(user.getEmail(), user.getPassword());
+        ValidatableResponse response = userApi.loginUser(new UserLogin(user.getEmail(), user.getPassword()));
 
         response.log().all()
                 .assertThat()
@@ -33,10 +37,10 @@ public class LoginUserTest {
     }
 
     @Test
-    @Step("Логин с неверным логином")
+    @DisplayName("Логин с некорректным email")
+    @Description("Этот тест проверяет, что логин с некорректным email возвращает сообщение об ошибке.")
     public void loginWithInvalidEmail() {
-        String requestBody = "{ \"email\": \"invalid@example.com\", \"password\": \"" + user.getPassword() + "\" }";
-        ValidatableResponse response = userApi.loginUser("invalid@example.com", user.getPassword());
+        ValidatableResponse response = userApi.loginUser(new UserLogin("invalid@example.com", user.getPassword()));
 
         response.log().all()
                 .assertThat()
@@ -46,9 +50,10 @@ public class LoginUserTest {
     }
 
     @Test
-    @Step("Логин с неверным паролем")
+    @DisplayName("Логин с некорректным паролем")
+    @Description("Этот тест проверяет, что логин с некорректным паролем возвращает сообщение об ошибке.")
     public void loginWithInvalidPassword() {
-        ValidatableResponse response = userApi.loginUser(user.getEmail(), "wrongpassword");
+        ValidatableResponse response = userApi.loginUser(new UserLogin(user.getEmail(), "wrongpassword"));
 
         response.log().all()
                 .assertThat()
@@ -60,11 +65,6 @@ public class LoginUserTest {
     @After
     public void tearDown() {
         String deleteToken = userApi.getToken(user.getEmail(), user.getPassword());
-        userApi.deleteUser(deleteToken, user.getPassword());
-    }
-
-    private String createUserJson(UserDataLombok user) {
-        return String.format("{ \"email\": \"%s\", \"password\": \"%s\", \"name\": \"%s\" }",
-                user.getEmail(), user.getPassword(), user.getName());
+        userApi.deleteUser(deleteToken);
     }
 }
