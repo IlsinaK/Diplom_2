@@ -6,14 +6,13 @@
 !**/src/**/target/maven-status
 !**/src/**/target/test-classes
 !**/src/**/target/Diplom_2-1/0-SNAPSHOT.jar
+!allure-report
+
 
 
 
 ### IntelliJ IDEA ###
-.idea/modules.xml
-.idea/jarRepositories.xml
-.idea/compiler.xml
-.idea/libraries/
+.idea/
 *.iws
 *.iml
 *.ipr
