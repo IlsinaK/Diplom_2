@@ -22,8 +22,8 @@ public class CreateOrderTest {
     private OrderApi orderApi;
     private UserApi userApi;
     private List<String> ingredientIds;
-    private UserDataLombok user;
     private String authToken;
+    private UserLogin user;
 
     @Before
     public void setUp() {
@@ -31,13 +31,12 @@ public class CreateOrderTest {
         userApi = new UserApi();
         ingredientIds = orderApi.getIngredientIds();
 
-        user = UserGenerator.getRandomUser();
-        userApi.registerUser(user);
+        UserDataLombok user = UserGenerator.getRandomUser();
+        userApi.registerUser(new UserDataLombok(user.getEmail(), user.getPassword(), user.getName())); // Исправлено на использование UserRegistration
 
         ValidatableResponse authResponse = userApi.loginUser(new UserLogin(user.getEmail(), user.getPassword())); // Авторизация
         authToken = authResponse.extract().path("accessToken");
     }
-
 
     @Test
     @DisplayName("Создание заказа с авторизацией")
@@ -95,7 +94,7 @@ public class CreateOrderTest {
     public void createOrderWithoutRegistration() {
         // Удаляем пользователя перед проверкой без авторизации
         if (user != null) {
-            String deleteToken = userApi.getToken(user.getEmail(), user.getPassword());
+            String deleteToken = userApi.getToken(new UserLogin(user.getEmail(), user.getPassword())); // Теперь используем UserLogin
             userApi.deleteUser(deleteToken);
         }
 
@@ -109,12 +108,12 @@ public class CreateOrderTest {
                 .body("success", is(true));
     }
 
-
     @After
     public void tearDown() {
         if (user != null) {
-            String deleteToken = userApi.getToken(user.getEmail(), user.getPassword());
+            String deleteToken = userApi.getToken(new UserLogin(user.getEmail(), user.getPassword())); // Теперь используем UserLogin
             userApi.deleteUser(deleteToken);
         }
     }
 }
+

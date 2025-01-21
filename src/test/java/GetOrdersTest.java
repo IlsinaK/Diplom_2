@@ -17,7 +17,6 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 
-
 public class GetOrdersTest {
 
     private OrderApi orderApi;
@@ -30,7 +29,7 @@ public class GetOrdersTest {
     public void setUp() {
         userApi = new UserApi();
         orderApi = new OrderApi();
-        user = UserGenerator.getRandomUser();
+        user = UserGenerator.getRandomUser(); // Теперь это объект UserRegistration
         objectMapper = new ObjectMapper();
     }
 
@@ -38,16 +37,17 @@ public class GetOrdersTest {
     @DisplayName("Создание и получение заказа для авторизованного пользователя")
     @Description("Этот тест проверяет создание заказа для авторизованного пользователя и получение списка заказов.")
     public void createAndGetOrderForAuthorizedUser() {
-        userApi.registerUser(user);
+        userApi.registerUser(user); // Регистрируем пользователя
 
-        authToken = userApi.loginUser(new UserLogin(user.getEmail(), user.getPassword()))  // Авторизация и получение токена
+        // Авторизация и получение токена
+        authToken = userApi.loginUser(new UserLogin(user.getEmail(), user.getPassword()))
                 .extract()
                 .path("accessToken");
 
-        List<String> ingredientIds = orderApi.getIngredientIds();   // Получаем список ID ингредиентов перед созданием заказа
+        List<String> ingredientIds = orderApi.getIngredientIds(); // Получаем список ID ингредиентов перед созданием заказа
 
         if (ingredientIds.isEmpty()) {
-            throw new IllegalStateException("Ингредиенты не найдены");// Убедимся, что ID ингредиентов получены
+            throw new IllegalStateException("Ингредиенты не найдены"); // Убедимся, что ID ингредиентов получены
         }
 
         String orderRequest;
@@ -65,10 +65,8 @@ public class GetOrdersTest {
                 .statusCode(200)
                 .body("success", is(true)); // Ожидаем успех
 
-
         ValidatableResponse getOrdersResponse = orderApi.getOrders(authToken); // Получаем заказы для авторизованного пользователя
         getOrdersResponse.log().all();
-
 
         getOrdersResponse.assertThat()
                 .statusCode(200)
@@ -76,12 +74,11 @@ public class GetOrdersTest {
                 .body("orders[0].ingredients", is(List.of(ingredientIds.get(0)))); // Проверяем, что ingredients заказа совпадает с ожидаемым
     }
 
-
     @Test
     @DisplayName("Получение заказов неавторизованного пользователя")
     @Description("Этот тест проверяет, что неавторизованный пользователь не может получить заказы и получает соответствующее сообщение об ошибке.")
     public void getOrdersForUnauthorizedUser() {
-        ValidatableResponse response = orderApi.getOrders(null);
+        ValidatableResponse response = orderApi.getOrders(null); // Получаем заказы без авторизации
 
         response.log().all()
                 .assertThat()
@@ -90,12 +87,11 @@ public class GetOrdersTest {
                 .body("message", is("You should be authorised"));
     }
 
-
     @After
     public void tearDown() {
         if (user != null) {
-            String deleteToken = userApi.getToken(user.getEmail(), user.getPassword()); // Получаем токен после авторизации для удаления пользователя
-            userApi.deleteUser(deleteToken);
+            String deleteToken = userApi.getToken(new UserLogin(user.getEmail(), user.getPassword())); // Получаем токен после авторизации для удаления пользователя
+            userApi.deleteUser(deleteToken); // Удаление пользователя после теста
         }
     }
 }
