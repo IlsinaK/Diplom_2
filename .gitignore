@@ -1,0 +1,46 @@
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/**/target/classes
+!**/src/**/target/generated-sources
+!**/src/**/target/generated-test-sources
+!**/src/**/target/maven-archiver
+!**/src/**/target/maven-status
+!**/src/**/target/test-classes
+!**/src/**/target/Diplom_2-1/0-SNAPSHOT.jar
+!allure-report
+
+
+
+
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+.idea/encodings.xml
+.idea/misc.xml
+.idea/vcs.xml
+
+### Eclipse ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### Mac OS ###
+.DS_Store
