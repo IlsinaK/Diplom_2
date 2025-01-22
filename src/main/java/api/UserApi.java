@@ -5,35 +5,33 @@ import io.restassured.RestAssured;
 import io.restassured.response.ValidatableResponse;
 import model.UserDataLombok;
 import model.UserLogin;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
+import com.google.gson.Gson;
 
 import static io.restassured.RestAssured.given;
 
 public class UserApi extends RestApi {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    private final Gson gson = new Gson();
 
 
-        @Step("Регистрация пользователя")
-        public ValidatableResponse registerUser(UserDataLombok userData) {
-            String requestBody = serializeUserDataLombok(userData); // Сериализация объекта UserDataLombok
+    @Step("Регистрация пользователя")
+    public ValidatableResponse registerUser(UserDataLombok userData) {
+        String requestBody = gson.toJson(userData);
 
-            return RestAssured
-                    .given()
-                    .contentType("application/json")
-                    .body(requestBody)
-                    .when()
-                    .post(BASE_URL + "/auth/register")
-                    .then();
-
-        }
+        return RestAssured
+                .given()
+                .contentType("application/json")
+                .body(requestBody)
+                .when()
+                .post(BASE_URL + "/auth/register")
+                .then();
+    }
 
 
     @Step("Получение токена пользователя")
     public String getToken(UserLogin userLogin) {
-        String requestBody = serializeUserLogin(userLogin); // Сериализация объекта
+        String requestBody = gson.toJson(userLogin);
 
         return given()
                 .contentType("application/json")
@@ -47,7 +45,7 @@ public class UserApi extends RestApi {
 
     @Step("Авторизация пользователя")
     public ValidatableResponse loginUser(UserLogin userLogin) {
-        String requestBody = serializeUserLogin(userLogin); // Сериализация объекта UserLogin
+        String requestBody = gson.toJson(userLogin);
 
         return given()
                 .contentType("application/json")
@@ -59,13 +57,13 @@ public class UserApi extends RestApi {
 
     @Step("Обновление данных пользователя")
     public ValidatableResponse updateUser(UserDataLombok userData, String authToken) {
-        String requestBody = serializeUserData(userData); // Сериализация объекта UserDataLombok
+        String requestBody = gson.toJson(userData);
 
         var requestSpec = given()
                 .contentType("application/json")
                 .body(requestBody);
 
-        if (authToken != null) { // Добавляем заголовок только если токен не null
+        if (authToken != null) {
             requestSpec.header("Authorization", authToken);
         }
 
@@ -81,33 +79,6 @@ public class UserApi extends RestApi {
                 .header("Authorization", "Bearer " + token)
                 .delete(BASE_URL + "/auth/user")
                 .then();
-    }
-
-    // Метод для сериализации объекта UserRegistration в JSON-строку
-    private String serializeUserDataLombok(UserDataLombok userDataLombok) {
-        try {
-            return objectMapper.writeValueAsString(userDataLombok);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Ошибка сериализации данных пользователя", e);
-        }
-    }
-
-    // Метод для сериализации объекта UserLogin в JSON-строку
-    private String serializeUserLogin(UserLogin userLogin) {
-        try {
-            return objectMapper.writeValueAsString(userLogin);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Ошибка сериализации данных пользователя", e);
-        }
-    }
-
-    // Метод для сериализации объекта UserDataLombok в JSON-строку
-    private String serializeUserData(UserDataLombok userData) {
-        try {
-            return objectMapper.writeValueAsString(userData);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Ошибка сериализации данных пользователя", e);
-        }
     }
 }
 

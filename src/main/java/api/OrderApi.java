@@ -40,7 +40,6 @@ public class OrderApi extends RestApi {
                 .contentType("application/json")
                 .body(orderRequest);
 
-        // Добавляем заголовок только если токен не null
         if (authToken != null) {
             request.header("Authorization", authToken);
         }
@@ -60,7 +59,7 @@ public class OrderApi extends RestApi {
         }
 
         return request.when()
-                .get("/orders")
+                .get(BASE_URL + "/orders")
                 .then();
     }
 
