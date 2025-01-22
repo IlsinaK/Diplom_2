@@ -1,16 +1,19 @@
 import api.OrderApi;
 import api.UserApi;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
-import io.restassured.response.ValidatableResponse;
-import model.OrderRequest;
 import model.UserDataLombok;
 import model.UserGenerator;
 import model.UserLogin;
+import model.OrderRequest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.restassured.response.ValidatableResponse;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+
 
 import java.util.Collections;
 import java.util.List;
@@ -23,7 +26,7 @@ public class CreateOrderTest {
     private UserApi userApi;
     private List<String> ingredientIds;
     private String authToken;
-    private UserLogin user;
+    private UserDataLombok user; // Объявление переменной user как поля класса
 
     @Before
     public void setUp() {
@@ -31,8 +34,8 @@ public class CreateOrderTest {
         userApi = new UserApi();
         ingredientIds = orderApi.getIngredientIds();
 
-        UserDataLombok user = UserGenerator.getRandomUser();
-        userApi.registerUser(new UserDataLombok(user.getEmail(), user.getPassword(), user.getName())); // Исправлено на использование UserRegistration
+        user = UserGenerator.getRandomUser(); // Генерация данных для нового пользователя
+        userApi.registerUser(new UserDataLombok(user.getEmail(), user.getPassword(), user.getName())); // Регистрация пользователя
 
         ValidatableResponse authResponse = userApi.loginUser(new UserLogin(user.getEmail(), user.getPassword())); // Авторизация
         authToken = authResponse.extract().path("accessToken");
@@ -40,26 +43,22 @@ public class CreateOrderTest {
 
     @Test
     @DisplayName("Создание заказа с авторизацией")
-    @Description("Тест проверяет возможность создания заказа с использованием действительного токена авторизации и одного ингредиента.")
-    public void createOrderWithAuth() {
+    @Description("Тест проверяет процесс создания заказа")
+    public void createOrderWithAuth() throws JsonProcessingException {
         if (ingredientIds.isEmpty()) {
             throw new AssertionError("Список идентификаторов ингредиентов пустой. Проверьте метод getIngredientIds.");
         }
 
         ObjectMapper objectMapper = new ObjectMapper();
-        String orderRequest;
-        try {
-            orderRequest = objectMapper.writeValueAsString(new OrderRequest(Collections.singletonList(ingredientIds.get(0))));
-        } catch (Exception e) {
-            throw new RuntimeException("Ошибка при сериализации объекта заказа", e);
-        }
+        String orderRequest = objectMapper.writeValueAsString(new OrderRequest(Collections.singletonList(ingredientIds.get(0)))); // Создание запроса заказа
         System.out.println("Создаем заказ с ингредиентом: " + orderRequest); // Отладочная информация
-        ValidatableResponse response = orderApi.createOrder(orderRequest, authToken);
+
+        ValidatableResponse response = orderApi.createOrder(orderRequest, authToken); // Создание заказа
 
         response.log().all()
                 .assertThat()
                 .statusCode(200)
-                .body("success", is(true));
+                .body("success", is(true)); // Проверка успешности ответа
     }
 
     @Test
@@ -99,7 +98,6 @@ public class CreateOrderTest {
         }
 
         String orderRequest = "{ \"ingredients\": [\"61c0c5a71d1f82001bdaaa6d\"] }";
-        // Не передаем authToken
         ValidatableResponse response = orderApi.createOrder(orderRequest, null);
 
         response.log().all()
@@ -116,4 +114,3 @@ public class CreateOrderTest {
         }
     }
 }
-

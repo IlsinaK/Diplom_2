@@ -4,6 +4,7 @@ import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
 import model.UserDataLombok;
 import model.UserGenerator;
+import model.UserLogin;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,11 +38,10 @@ public class CreateUserTest {
     @DisplayName("Создание существующего пользователя")
     @Description("Тест проверяет попытку регистрации пользователя с уже существующими данными.")
     public void createExistingUser() {
-        // Первая регистрация
+
         ValidatableResponse firstResponse = userApi.registerUser(user);
         firstResponse.assertThat().statusCode(200); // Проверка успешного создания пользователя
 
-        // Повторная регистрация
         ValidatableResponse response = userApi.registerUser(user);
         response.log().all()
                 .assertThat()
@@ -54,7 +54,7 @@ public class CreateUserTest {
     @DisplayName("Создание пользователя без email")
     @Description("Тест проверяет попытку регистрации пользователя без указания email.")
     public void createUserWithoutEmail() {
-        UserDataLombok newUser = new UserDataLombok("", "password", "Username");
+        UserDataLombok newUser = new UserDataLombok(null, "password", "Username");
         ValidatableResponse response = userApi.registerUser(newUser);
 
         response.log().all()
@@ -68,7 +68,7 @@ public class CreateUserTest {
     @DisplayName("Создание пользователя без пароля")
     @Description("Тест проверяет попытку регистрации пользователя без указания пароля.")
     public void createUserWithoutPassword() {
-        UserDataLombok newUser = new UserDataLombok(user.getEmail(), "", user.getName());
+        UserDataLombok newUser = new UserDataLombok(user.getEmail(), null, user.getName());
         ValidatableResponse response = userApi.registerUser(newUser);
 
         response.log().all()
@@ -82,7 +82,7 @@ public class CreateUserTest {
     @DisplayName("Создание пользователя без имени")
     @Description("Тест проверяет попытку регистрации пользователя без указания имени.")
     public void createUserWithoutName() {
-        UserDataLombok newUser = new UserDataLombok(user.getEmail(), user.getPassword(), "");
+        UserDataLombok newUser = new UserDataLombok(user.getEmail(), user.getPassword(), null);
         ValidatableResponse response = userApi.registerUser(newUser);
 
         response.log().all()
@@ -94,8 +94,10 @@ public class CreateUserTest {
 
     @After
     public void tearDown() {
-        // Здесь нужно добавить удаление пользователя, если он был создан
-    }
+            String deleteToken = userApi.getToken(new UserLogin(user.getEmail(), user.getPassword())); // Получаем токен для удаления пользователя
+            userApi.deleteUser(deleteToken);
+        }
+
 }
 
 
